@@ -1,0 +1,21 @@
+# Ignorar archivos y directorios generados por Pillow
+Pillow/
+*.jpg
+*.jpeg
+*.png
+...
+
+# Ignorar archivos y directorios generados por numpy
+__pycache__/
+*.pyc
+...
+
+# Ignorar archivos y directorios generados por matplotlib
+__pycache__/
+*.pyc
+...
+
+# Ignorar archivos y directorios generados por scipy
+__pycache__/
+*.pyc
+...
