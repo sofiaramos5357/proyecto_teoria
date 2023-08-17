@@ -2,7 +2,6 @@ import tkinter as tk
 from PIL import Image, ImageTk 
 from interfaz.grafico import generar_grafico_pert
 from tkinter import ttk
-#from proyecto import proyecto
 
 def abrir_ventana_ayuda():
     ventana_ayuda = tk.Toplevel()
@@ -108,14 +107,26 @@ class Frame(tk.Frame):
             self.boton_agregar_actividades.config(state=tk.NORMAL)
         else:
             self.boton_agregar_actividades.config(state=tk.DISABLED)
-   # proyecto()
 
-
+def almacenar_actividad(datoActividades, actividad, durOpt, durProb, durPes,root):
+        # Llamar a la función para generar el gráfico y obtener los valores
+        esperada, varianza, desvEstandar = generar_grafico_pert(durOpt, durProb, durPes)
+        datoActividades[actividad] = {
+        'duracion_optimista': durOpt,
+        'duracion_probable': durProb,
+        'duracion_pesimista': durPes,
+        'pert':esperada,
+        'varianza':varianza,
+        'desvEstandar':desvEstandar
+    }
+        ventana3(root,datoActividades,actividad)
+        
 def agregar_actividades(frame):
     frame.root.destroy()
     
-    #print(frame.nomProyecto.get())
-    #datoActividades = {}
+    datoActividades = {}
+    actividad=0
+    actividad+=1
 
     root = tk.Tk()
     root.title('Registro de Actividades')
@@ -155,74 +166,69 @@ def agregar_actividades(frame):
     button_frame2 = tk.Frame(root, bg="white")
     button_frame2.pack(side='top', pady=20)
 
-    boton_agregar = tk.Button(button_frame2, text='AGREGAR', bg='#4e4bc9', fg='white', font=("Helvetica", 14),command=lambda: ventana3(root))
+    boton_agregar = tk.Button(button_frame2, text='AGREGAR', bg='#4e4bc9', fg='white', font=("Helvetica", 14),
+                              #command=lambda: ventana3(root)
+                               command=lambda:almacenar_actividad(datoActividades, actividad, durOpt.get(), durPes.get(), durProb.get(),root))
     boton_agregar.grid(row=0, column=0, padx=20, pady=20, sticky='e')
 
     boton_finalizar = tk.Button(button_frame2, text='FINALIZAR', bg='#4e4bc9', fg='white', font=("Helvetica", 14),command=lambda: ventana4(root))
     boton_finalizar.grid(row=0, column=1, padx=20, pady=20, sticky='w')
 
-    #datoActividades[nombre_actividad] = datos_actividad
-  
-
 #----------------------------------------------------------------
-def ventana3(frame):
+def ventana3(frame,datoActividades,actividad):
     if frame is not None and frame.winfo_exists():
       frame.destroy()
 
     root = tk.Tk()
-    root.title('Duración PERT para la actividad #1')
+    root.title('Duración PERT para la actividad {actividad}')
     root.geometry('800x600')
     root.configure(bg='white')
 
-    #Variable de prueba para los valores 
-    duracion_optimista_valor = 5
+    durOpt = datoActividades[actividad]['duracion_optimista']
+    durPes = datoActividades[actividad]['duracion_pesimista']
+    durProb = datoActividades[actividad]['duracion_probable']
+    esperada = datoActividades[actividad]['pert']
+    varianza = datoActividades[actividad]['varianza']
+    desvEstandar = datoActividades[actividad]['desvEstandar']
 
     # Agregar etiquetas
-    etiquetaActividad = tk.Label(root, text="Nombre de la actividad: "+ str(duracion_optimista_valor), bg='white', fg='black', font=("Helvetica", 16), anchor='w', width=28)
+    etiquetaActividad = tk.Label(root, text="Nombre de la actividad: "+ str(actividad), bg='white', fg='black', font=("Helvetica", 16), anchor='w', width=28)
     etiquetaActividad.pack(pady=10, padx=20)
 
-    etiqueta1 = tk.Label(root, text="Duración optimista: "+ str(duracion_optimista_valor)+" días", bg='white', fg='black', font=("Helvetica", 14), anchor='w', width=30)
+    etiqueta1 = tk.Label(root, text="Duración optimista: "+ str(durOpt)+" días", bg='white', fg='black', font=("Helvetica", 14), anchor='w', width=30)
     etiqueta1.pack(pady=10, padx=20)
 
-    etiqueta2 = tk.Label(root, text="Duración más probable: "+ str(duracion_optimista_valor)+" días", bg='white', fg='black', font=("Helvetica", 14), anchor='w', width=30)
+    etiqueta2 = tk.Label(root, text="Duración más probable: "+ str(durProb)+" días", bg='white', fg='black', font=("Helvetica", 14), anchor='w', width=30)
     etiqueta2.pack(pady=10, padx=20)
 
-    etiqueta3 = tk.Label(root, text="Duración pesimista: "+ str(duracion_optimista_valor)+" días", bg='white', fg='black', font=("Helvetica", 14), anchor='w', width=30)
+    etiqueta3 = tk.Label(root, text="Duración pesimista: "+ str(durPes)+" días", bg='white', fg='black', font=("Helvetica", 14), anchor='w', width=30)
     etiqueta3.pack(pady=10, padx=20)
 
-    etiqueta4 = tk.Label(root, text="Desviacón estándar (σ): "+ str(duracion_optimista_valor), bg='white', fg='black', font=("Helvetica", 14), anchor='w', width=30)
+    etiqueta4 = tk.Label(root, text="Desviacón estándar (σ): "+ str(desvEstandar), bg='white', fg='black', font=("Helvetica", 14), anchor='w', width=30)
     etiqueta4.pack(pady=10, padx=20)
 
-    etiqueta5 = tk.Label(root, text="Duración esperada (PERT): "+ str(duracion_optimista_valor)+" días", bg='white', fg='black', font=("Helvetica", 14), anchor='w', width=30)
+    etiqueta5 = tk.Label(root, text="Duración esperada (PERT): "+ str(esperada)+" días", bg='white', fg='black', font=("Helvetica", 14), anchor='w', width=30)
     etiqueta5.pack(pady=10, padx=20)
 
     #Frame para el botón
     button_frame = tk.Frame(root, bg='white')
     button_frame.pack(side='top', pady=20)
 
-    #Botón en el frame
-    #boton_anterior = tk.Button(button_frame, text='Actividad anterior', bg='#4e4bc9', fg='white', font=("Helvetica", 14))
-    #boton_anterior.grid(row=0, column=0, padx=10, pady=0, sticky='w')
-
     # Botón en el frame, centrado
     boton_agregarActividad = tk.Button(button_frame, text='Agregar actividad', bg='#4e4bc9', fg='white', font=("Helvetica", 14))
     boton_agregarActividad.grid(row=0, column=2, padx=10, pady=0, sticky='ew') 
 
     self=root
-
+    
     # Botón en el frame
-    boton_duracionFinal = tk.Button(button_frame, text='Duracion final del proyecto', bg='#4e4bc9', fg='white', font=("Helvetica", 14), command=lambda: ventana4(self))
+    boton_duracionFinal = tk.Button(button_frame, text='Duracion final del proyecto', bg='#4e4bc9', fg='white', font=("Helvetica", 14), command=lambda: ventana4(self,datoActividades))
     boton_duracionFinal.grid(row=0, column=1, padx=0, pady=0, sticky='w')  
 
     barra_menu(root)
 
     # Cargar la imagen exportada y mostrarla en un widget de Tkinter
-
-   # Llamar a la función para generar el gráfico y guardar la imagen
-    generar_grafico_pert(4, 8, 10)
-
     try:
-        img = Image.open('C:\\Users\\ana.delcid\\Documents\\eliminar\\Proyecto_Teoria_2\\simulador\\img\\grafico_pert.jpeg')
+        img = Image.open('..\\simulador\\img\\grafico_pert.jpeg')
         img = img.resize((700, 550))
         img_tk = ImageTk.PhotoImage(img)
 
@@ -233,11 +239,10 @@ def ventana3(frame):
         print("Error al cargar la imagen:", e)
     
 
-
 #--------------------------
-def ventana4(frame):
+def ventana4(frame,datoActividades):
 
-    # Cerrar la ventana3 si existe y está abierta
+    # Cerrar ventana anterior si existe y está abierta
     if frame is not None and frame.winfo_exists():
       frame.destroy()
 
@@ -246,7 +251,6 @@ def ventana4(frame):
     root.title('Duración final del proyecto')
     root.geometry('800x600')
     root.configure(bg='white')
-
 
     barra_menu(root)
 
@@ -265,8 +269,9 @@ def ventana4(frame):
     tabla.heading("Duración", text="Duración")
 
     # Insertar datos desde la lista de diccionarios
-    for item in lista_actividades:
-        tabla.insert("", "end", values=(item["actividad"], item["duracion"]))
+    for actividad, datos in datoActividades.items():
+        pert_valor = datos['pert']
+        tabla.insert("", "end", values=(actividad, pert_valor))
 
     # Agregar la tabla a la ventana
     tabla.pack(pady=20, padx=20)
@@ -311,7 +316,4 @@ def ventana4(frame):
     #Botón en el frame
     boton_finalizar = tk.Button(button_frame, text='Finalizar', bg='#4e4bc9', fg='white', font=("Helvetica", 14), command=root.destroy)
     boton_finalizar.grid(row=0, column=1, padx=20, pady=20, sticky='w')
-
-
-
 #----------------------------------------------
