@@ -7,27 +7,91 @@ def abrir_ventana_ayuda():
     ventana_ayuda = tk.Toplevel()
     ventana_ayuda.title("Ayuda")
     ventana_ayuda.geometry("800x600")
-    ventana_ayuda.configure(bg='#6b68ff') 
+    ventana_ayuda.configure(bg='white') 
 
     titulo_ayuda = tk.Label(ventana_ayuda,
-                            text="¿Cómo funciona este simulador?",
-                            bg="#6b68ff",
-                            fg="white",
-                            font=("Helvetica", 16))
-    titulo_ayuda.pack(pady=10)
+                            text="Descripción del Modelo:",
+                            bg="white",
+                            fg="black",
+                            font=("Helvetica", 16),
+                            anchor="w")
+    titulo_ayuda.pack(pady=5,  padx=20, anchor="w")
 
-    instrucciones_text = """
-   Este es un simulador de estimación de tiempo necesario para un proyecto. Utiliza el método PERT (Program Evaluation and Review Technique), que es ampliamente utilizado para estimar la duración de proyectos, ya que considera la incertidumbre inherente en las estimaciones de tiempo para cada actividad.
-
-   La Técnica de Revisión y Evaluación de Proyectos (PERT), en conjunto con el Teorema de Chebyshev, nos permiten realizar estimaciones de tiempo utilizando el mejor, el tiempo probable y el peor tiempo en que se puede realizar una actividad, y con ellos obtener la duración esperada. PERT nos ofrece un modelo preexistente para calcular la duración esperada. 
-    """
+    instrucciones_text = """SIMU-PERT es una herramienta diseñada para estimar la duración de proyectos mediante el método 
+PERT (Program Evaluation and Review Technique). Este método considera la incertidumbre inherente
+en las estimaciones de tiempo de las actividades del proyecto. A continuación, te explicamos cómo
+se aplica este modelo: """
     instrucciones_label = tk.Label(ventana_ayuda,
-                                   text=instrucciones_text,
-                                   bg="#6b68ff",
-                                   fg="white",
-                                   font=("Helvetica", 12),
-                                   justify="left")
-    instrucciones_label.pack(padx=20, pady=10, anchor="w")
+                                    text=instrucciones_text,
+                                    bg="white",
+                                    fg="black",
+                                    font=("Helvetica", 12),
+                                    justify="left")
+    instrucciones_label.pack(padx=20, pady=5, anchor="w")
+    
+    titulo_ayuda2 = tk.Label(ventana_ayuda,
+                            text="Fórmulas y Cálculos:",
+                            bg="white",
+                            fg="black",
+                            font=("Helvetica", 16))
+    titulo_ayuda2.pack(pady=5,  padx=20, anchor="w")
+
+    instrucciones_text2  = """• Duración Esperada (TE): Calculamos la duración esperada de cada actividad utilizando la fórmula 
+ TE = (O + 4M + P) / 6, donde O es la duración optimista, M es la duración más probable y P es la duración 
+ pesimista.
+• Varianza (Var): Calculamos la varianza de cada actividad utilizando la fórmula Var = ((P - O) / 6)^2.
+• Parámetros de Distribución Beta: Utilizamos los valores de O, M y P para calcular los parámetros alfa y
+ beta de la distribución beta. """
+    instrucciones_label2 = tk.Label(ventana_ayuda,
+                                    text=instrucciones_text2,
+                                    bg="white",
+                                    fg="black",
+                                    font=("Helvetica", 12),
+                                    justify="left")
+    instrucciones_label2.pack(padx=20, pady=5, anchor="w")
+    
+    titulo_ayuda3 = tk.Label(ventana_ayuda,
+                            text="Intervalos de Confianza:",
+                            bg="white",
+                            fg="black",
+                            font=("Helvetica", 16))
+    titulo_ayuda3.pack(pady=5,  padx=20, anchor="w")
+
+    instrucciones_text3  = """
+• Los intervalos de confianza (68%, 95% y 99%) permiten al usuario seleccionar qué tan seguro quiere 
+  estar con respecto a la duración estimada del proyecto."""
+    instrucciones_label3 = tk.Label(ventana_ayuda,
+                                    text=instrucciones_text3,
+                                    bg="white",
+                                    fg="black",
+                                    font=("Helvetica", 12),
+                                    justify="left")
+    instrucciones_label3.pack(padx=20, pady=5, anchor="w")
+    
+    titulo_ayuda4 = tk.Label(ventana_ayuda,
+                            text="Significado Práctico:",
+                            bg="white",
+                            fg="black",
+                            font=("Helvetica", 16))
+    titulo_ayuda4.pack(pady=5,  padx=20, anchor="w")
+
+    instrucciones_text4  = """• Los resultados proporcionados por SIMU-PERT permiten tomar decisiones informadas en la 
+    planificación y ejecución de proyectos. Los intervalos de confianza ayudan a comprender la 
+    variabilidad y el riesgo asociados con las estimaciones de duración."""
+    instrucciones_label4 = tk.Label(ventana_ayuda,
+                                    text=instrucciones_text4,
+                                    bg="white",
+                                    fg="black",
+                                    font=("Helvetica", 12),
+                                    justify="left")
+    instrucciones_label4.pack(padx=20, pady=5, anchor="w")
+    
+    salir_button = tk.Button(ventana_ayuda,
+                             text="CERRAR", bg='#4e4bc9', fg='white', font=("Helvetica", 14),
+                             command=ventana_ayuda.destroy)  # Close the window
+    salir_button.pack(pady=20)
+    
+    
 
 def barra_menu(root):
     barra_menu = tk.Menu(root)
@@ -68,8 +132,11 @@ class Frame(tk.Frame):
                                     command=self.iniciar_proyecto)
         self.boton_abrir.grid(row=0, column=0, padx=20, pady=20, sticky='e')
 
-        self.boton_cancelar = tk.Button(self.button_frame, text='CANCELAR', bg='#4e4bc9', fg='white', font=("Helvetica", 14), command=self.root.destroy)
-        self.boton_cancelar.grid(row=0, column=1, padx=20, pady=20, sticky='w')
+        self.boton_ayuda = tk.Button(self.button_frame, text='AYUDA', bg='#4e4bc9', fg='white', font=("Helvetica", 14), command=abrir_ventana_ayuda)
+        self.boton_ayuda.grid(row=0, column=1, padx=20, pady=20, sticky='w')
+        
+        self.boton_ayuda = tk.Button(self.button_frame, text='VER PROYECTOS', bg='#4e4bc9', fg='white', font=("Helvetica", 14))
+        self.boton_ayuda.grid(row=0, column=2, padx=20, pady=20, sticky='w')
         
     def iniciar_proyecto(self):
         self.root.configure(bg='white')
