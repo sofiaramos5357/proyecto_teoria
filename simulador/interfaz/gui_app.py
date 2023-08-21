@@ -2,6 +2,8 @@ import tkinter as tk
 from PIL import Image, ImageTk 
 from interfaz.grafico import generar_grafico_pert
 from tkinter import ttk
+datoActividades = {}
+actividad=0
 
 def abrir_ventana_ayuda():
     ventana_ayuda = tk.Toplevel()
@@ -187,12 +189,11 @@ def almacenar_actividad(datoActividades, actividad, durOpt, durProb, durPes,root
         'desvEstandar':desvEstandar
     }
         ventana3(root,datoActividades,actividad)
-        
+
 def agregar_actividades(frame):
     frame.root.destroy()
-    
-    datoActividades = {}
-    actividad=0
+
+    global actividad
     actividad+=1
 
     root = tk.Tk()
@@ -238,8 +239,8 @@ def agregar_actividades(frame):
                                command=lambda:almacenar_actividad(datoActividades, actividad, durOpt.get(), durPes.get(), durProb.get(),root))
     boton_agregar.grid(row=0, column=0, padx=20, pady=20, sticky='e')
 
-    boton_finalizar = tk.Button(button_frame2, text='FINALIZAR', bg='#4e4bc9', fg='white', font=("Helvetica", 14),command=lambda: ventana4(root))
-    boton_finalizar.grid(row=0, column=1, padx=20, pady=20, sticky='w')
+    # boton_finalizar = tk.Button(button_frame2, text='FINALIZAR', bg='#4e4bc9', fg='white', font=("Helvetica", 14),command=lambda: ventana4(root))
+    # boton_finalizar.grid(row=0, column=1, padx=20, pady=20, sticky='w')
 
 #----------------------------------------------------------------
 def ventana3(frame,datoActividades,actividad):
@@ -282,14 +283,12 @@ def ventana3(frame,datoActividades,actividad):
     button_frame.pack(side='top', pady=20)
 
     # Botón en el frame, centrado
-    boton_agregarActividad = tk.Button(button_frame, text='Agregar actividad', bg='#4e4bc9', fg='white', font=("Helvetica", 14))
-    boton_agregarActividad.grid(row=0, column=2, padx=10, pady=0, sticky='ew') 
 
     self=root
     
     # Botón en el frame
     boton_duracionFinal = tk.Button(button_frame, text='Duracion final del proyecto', bg='#4e4bc9', fg='white', font=("Helvetica", 14), command=lambda: ventana4(self,datoActividades))
-    boton_duracionFinal.grid(row=0, column=1, padx=0, pady=0, sticky='w')  
+    boton_duracionFinal.grid(row=0, column=0, padx=0, pady=0, sticky='w')  
 
     barra_menu(root)
 
@@ -306,12 +305,84 @@ def ventana3(frame,datoActividades,actividad):
         print("Error al cargar la imagen:", e)
     
 
+
+# datoActividades[2] = {
+#     'duracion_optimista': 15,
+#     'duracion_probable': 23,
+#     'duracion_pesimista': 34,
+#     'pert':23,
+#     'varianza':34,
+#     'desvEstandar':23
+# }
+
 #--------------------------
 def ventana4(frame,datoActividades):
 
     # Cerrar ventana anterior si existe y está abierta
     if frame is not None and frame.winfo_exists():
       frame.destroy()
+    
+    def abrir_ventana_edicion():
+    # Obtener el elemento seleccionado en la tabla
+        item = tabla.selection()[0]
+        valor_actual = tabla.item(item, "values")[1]  # Obtener el valor actual
+    
+    # Crear una nueva ventana para la edición
+        ventana_edicion = tk.Toplevel(root)
+        ventana_edicion.title('Editar Valor')
+        ventana_edicion.geometry('300x100')
+
+    # Crear etiquetas y entradas para editar el valor de duracion
+
+        valor_actual_actividad = int(tabla.item(item, "values")[0])
+
+        durOpt = datoActividades[valor_actual_actividad]['duracion_optimista']
+        durPes =  datoActividades[valor_actual_actividad]['duracion_pesimista']
+        durProb = datoActividades[valor_actual_actividad]['duracion_probable']
+
+    # duracion Optimista
+        ac_label1 = ttk.Label(ventana_edicion, text='Duración Optimista: ')
+        ac_label1.pack(pady=10)
+        
+        entry_durOpt = ttk.Entry(ventana_edicion)
+        entry_durOpt.insert(0,str(durOpt))
+        entry_durOpt.pack()
+        
+    #duracion Pesimista
+        ac_label2 = ttk.Label(ventana_edicion, text='Duración Pesimista:')
+        ac_label2.pack(pady=10)
+
+        entry_durPes = ttk.Entry(ventana_edicion)
+        entry_durPes.insert(0,str(durPes))
+        entry_durPes.pack()
+        
+    #duracion probable
+        ac_label3 = ttk.Label(ventana_edicion, text='Duración más  Probable:')
+        ac_label3.pack(pady=10)
+
+        entry_durProb = ttk.Entry(ventana_edicion)
+        entry_durProb.insert(0,str(durProb))
+        entry_durProb.pack()
+
+    # Función para guardar cambios y actualizar la tabla
+        def guardar_cambios():
+            print(entry_durOpt.get())
+            print(entry_durOpt.get())
+            print(entry_durOpt.get())
+            esperada, varianza, desvEstandar = generar_grafico_pert(int(entry_durOpt.get()), int(entry_durProb.get()), int(entry_durPes.get()))
+            datoActividades[valor_actual_actividad]['duracion_optimista']=entry_durOpt.get()
+            datoActividades[valor_actual_actividad]['duracion_probable']=entry_durProb.get()
+            datoActividades[valor_actual_actividad]['duracion_pesimista']=entry_durPes.get()
+            datoActividades[valor_actual_actividad]['pert']=esperada
+            datoActividades[valor_actual_actividad]['varianza']=varianza
+            datoActividades[valor_actual_actividad]['desvEstandar']=desvEstandar
+            nuevo_valor = esperada
+            tabla.item(item, values=(tabla.item(item, "values")[0], nuevo_valor))
+            ventana_edicion.destroy()
+
+    # Botón para guardar cambios
+        boton_guardar = ttk.Button(ventana_edicion, text="Guardar Cambios", command=guardar_cambios)
+        boton_guardar.pack(pady=10)
 
     # Crear una nueva ventana
     root = tk.Tk()
@@ -320,15 +391,6 @@ def ventana4(frame,datoActividades):
     root.configure(bg='white')
 
     barra_menu(root)
-
-    # Lista de actividades y duraciones (diccionarios)
-    lista_actividades = [
-        {"actividad": "Actividad 1", "duracion": 5},
-        {"actividad": "Actividad 2", "duracion": 8},
-        {"actividad": "Actividad 3", "duracion": 6},
-        {"actividad": "Actividad 4", "duracion": 10},
-        {"actividad": "Actividad 5", "duracion": 7}
-    ]
 
     # Crear un Treeview para mostrar la tabla
     tabla = ttk.Treeview(root, columns=("Actividad", "Duración"), show="headings")
@@ -342,6 +404,9 @@ def ventana4(frame,datoActividades):
 
     # Agregar la tabla a la ventana
     tabla.pack(pady=20, padx=20)
+
+    boton_editar = ttk.Button(root, text="Editar Valor", command=abrir_ventana_edicion)
+    boton_editar.pack()
 
     duracion =10
     # Agregar etiquetas
@@ -383,4 +448,7 @@ def ventana4(frame,datoActividades):
     #Botón en el frame
     boton_finalizar = tk.Button(button_frame, text='Finalizar', bg='#4e4bc9', fg='white', font=("Helvetica", 14), command=root.destroy)
     boton_finalizar.grid(row=0, column=1, padx=20, pady=20, sticky='w')
+
+    boton_agregarActividad = tk.Button(button_frame, text='Agregar actividad', bg='#4e4bc9', fg='white', font=("Helvetica", 14))
+    boton_agregarActividad.grid(row=0, column=2, padx=10, pady=0, sticky='ew') 
 #----------------------------------------------
