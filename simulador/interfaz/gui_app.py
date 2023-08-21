@@ -303,71 +303,80 @@ def ventana3(frame,datoActividades,actividad):
         img_label.pack(pady=20, padx=20)
     except Exception as e:
         print("Error al cargar la imagen:", e)
-    
-
-
-# datoActividades[2] = {
-#     'duracion_optimista': 15,
-#     'duracion_probable': 23,
-#     'duracion_pesimista': 34,
-#     'pert':23,
-#     'varianza':34,
-#     'desvEstandar':23
-# }
-
 #--------------------------
+duracionFinal = 0
+suma_varianzas = 0
+desv_estandar_total = 0
+
 def ventana4(frame,datoActividades):
+    #suma de resultados
+    global duracionFinal
+    duracionFinal = sum(actividad['pert'] for actividad in datoActividades.values())
+    global suma_varianzas
+    suma_varianzas = sum(actividad['desvEstandar'] ** 2 for actividad in datoActividades.values())
+    global desv_estandar_total
+    desv_estandar_total = np.sqrt(suma_varianzas)
 
     # Cerrar ventana anterior si existe y está abierta
     if frame is not None and frame.winfo_exists():
       frame.destroy()
+
+    #funcion para eliminar actividades
+    def eliminarActividad():
+        item = tabla.selection()[0]
+        valor_actual_actividad = int(tabla.item(item, "values")[0])
+        del datoActividades[valor_actual_actividad]
+        tabla.delete(item)
+        #actualizar etiquetas
+        global duracionFinal
+        duracionFinal = sum(actividad['pert'] for actividad in datoActividades.values())
+        global suma_varianzas
+        suma_varianzas = sum(actividad['desvEstandar'] ** 2 for actividad in datoActividades.values())
+        global desv_estandar_total
+        desv_estandar_total = np.sqrt(suma_varianzas)
+        etiqueta1.config(text="Duración final del proyecto: "+ str(duracionFinal)+" días", bg='white', fg='black', font=("Helvetica", 14), anchor='w', width=30)
+        etiqueta.config(text="Desviación estandar total: "+ str(desv_estandar_total)+" días", bg='white', fg='black', font=("Helvetica", 14), anchor='w', width=30)
+        mensaje_label.config(text="", bg='white', fg='black', font=("Helvetica", 14), anchor='w', width=30)
+        mensaje_label2.config(text="", bg='white', fg='black', font=("Helvetica", 14), anchor='w', width=30)
+    
+    #funcion para ver la grafica de una actividad
+    def verGrafica():
+        item = tabla.selection()[0]
+        valor_actual_actividad = int(tabla.item(item, "values")[0])
+        ventana3(root,datoActividades,valor_actual_actividad)
     
     def abrir_ventana_edicion():
     # Obtener el elemento seleccionado en la tabla
         item = tabla.selection()[0]
-    
     # Crear una nueva ventana para la edición
         ventana_edicion = tk.Toplevel(root)
         ventana_edicion.title('Editar Valor')
         ventana_edicion.geometry('300x100')
-
     # Crear etiquetas y entradas para editar el valor de duracion
-
         valor_actual_actividad = int(tabla.item(item, "values")[0])
-
         durOpt = datoActividades[valor_actual_actividad]['duracion_optimista']
         durPes =  datoActividades[valor_actual_actividad]['duracion_pesimista']
         durProb = datoActividades[valor_actual_actividad]['duracion_probable']
-
     # duracion Optimista
         ac_label1 = ttk.Label(ventana_edicion, text='Duración Optimista: ')
-        ac_label1.pack(pady=10)
-        
+        ac_label1.pack(pady=10)     
         entry_durOpt = ttk.Entry(ventana_edicion)
         entry_durOpt.insert(0,str(durOpt))
-        entry_durOpt.pack()
-        
+        entry_durOpt.pack()       
     #duracion Pesimista
         ac_label2 = ttk.Label(ventana_edicion, text='Duración Pesimista:')
         ac_label2.pack(pady=10)
-
         entry_durPes = ttk.Entry(ventana_edicion)
         entry_durPes.insert(0,str(durPes))
-        entry_durPes.pack()
-        
+        entry_durPes.pack()       
     #duracion probable
         ac_label3 = ttk.Label(ventana_edicion, text='Duración más  Probable:')
         ac_label3.pack(pady=10)
-
         entry_durProb = ttk.Entry(ventana_edicion)
         entry_durProb.insert(0,str(durProb))
         entry_durProb.pack()
-
     # Función para guardar cambios y actualizar la tabla
         def guardar_cambios():
-            print(entry_durOpt.get())
-            print(entry_durOpt.get())
-            print(entry_durOpt.get())
             esperada, varianza, desvEstandar = generar_grafico_pert(int(entry_durOpt.get()), int(entry_durProb.get()), int(entry_durPes.get()))
             datoActividades[valor_actual_actividad]['duracion_optimista']=entry_durOpt.get()
             datoActividades[valor_actual_actividad]['duracion_probable']=entry_durProb.get()
@@ -377,6 +386,18 @@ def ventana4(frame,datoActividades):
             datoActividades[valor_actual_actividad]['desvEstandar']=desvEstandar
             nuevo_valor = esperada
             tabla.item(item, values=(tabla.item(item, "values")[0], nuevo_valor))
+            #actualizar etiquetas
+            global duracionFinal
+            duracionFinal = sum(actividad['pert'] for actividad in datoActividades.values())
+            global suma_varianzas
+            suma_varianzas = sum(actividad['desvEstandar'] ** 2 for actividad in datoActividades.values())
+            global desv_estandar_total
+            desv_estandar_total = np.sqrt(suma_varianzas)
+            etiqueta1.config(text="Duración final del proyecto: "+ str(duracionFinal)+" días", bg='white', fg='black', font=("Helvetica", 14), anchor='w', width=30)
+            etiqueta.config(text="Desviación estandar total: "+ str(desv_estandar_total)+" días", bg='white', fg='black', font=("Helvetica", 14), anchor='w', width=30)
+            mensaje_label.config(text="", bg='white', fg='black', font=("Helvetica", 14), anchor='w', width=30)
+            mensaje_label2.config(text="", bg='white', fg='black', font=("Helvetica", 14), anchor='w', width=30)
+
             ventana_edicion.destroy()
 
     # Botón para guardar cambios
@@ -407,10 +428,12 @@ def ventana4(frame,datoActividades):
     boton_editar = ttk.Button(root, text="Editar Valor", command=abrir_ventana_edicion)
     boton_editar.pack()
 
-    #suma de resultados
-    duracionFinal = sum(actividad['pert'] for actividad in datoActividades.values())
-    suma_varianzas = sum(actividad['desvEstandar'] ** 2 for actividad in datoActividades.values())
-    desv_estandar_total = np.sqrt(suma_varianzas)
+    boton_editar = ttk.Button(root, text="Eliminar Actividad", command=eliminarActividad)
+    boton_editar.pack()
+
+    boton_verGrafica = ttk.Button(root, text="Ver grafica de la actividad", command=verGrafica)
+    boton_verGrafica.pack()
+
 
     # Agregar etiquetas
     etiqueta1 = tk.Label(root, text="Duración final del proyecto: "+ str(duracionFinal)+" días", bg='white', fg='black', font=("Helvetica", 14), anchor='w', width=30)
@@ -473,6 +496,57 @@ def ventana4(frame,datoActividades):
     boton_finalizar = tk.Button(button_frame, text='Finalizar', bg='#4e4bc9', fg='white', font=("Helvetica", 14), command=root.destroy)
     boton_finalizar.grid(row=0, column=1, padx=20, pady=40, sticky='w')
 
-    boton_agregarActividad = tk.Button(button_frame, text='Agregar actividad', bg='#4e4bc9', fg='white', font=("Helvetica", 14))
+    boton_agregarActividad = tk.Button(button_frame, text='Agregar actividad', bg='#4e4bc9', fg='white', font=("Helvetica", 14), command=lambda: ventana5(root))
     boton_agregarActividad.grid(row=0, column=2, padx=10, pady=0, sticky='ew') 
 #----------------------------------------------
+
+def ventana5(frame):
+    # Cerrar ventana anterior si existe y está abierta
+    if frame is not None and frame.winfo_exists():
+      frame.destroy()
+
+    global actividad
+    actividad+=1
+
+    root = tk.Tk()
+    root.title('Registro de Actividades')
+    root.geometry('800x600')
+    root.configure(bg='white')
+
+    titulo_actividades = tk.Label(root, text="Ingrese la duración esperada de cada actividad", bg='white', fg='black', font=("Helvetica", 20))
+    titulo_actividades.pack(pady=20, padx=50)
+        
+    entry_row_frame2 = tk.Frame(root, bg='white')
+    entry_row_frame2.pack()
+    # duracion Optimista
+    ac_label1 = tk.Label(entry_row_frame2, text='Duración Optimista:', bg='white', fg='black', font=("Helvetica", 12))
+    ac_label1.grid(row=0, column=0, pady=20, padx=20)
+
+    durOpt = tk.IntVar()
+    entry_durOpt = tk.Entry(entry_row_frame2, textvariable=durOpt, font=("Helvetica", 14))
+    entry_durOpt.grid(row=0, column=1, pady=10, padx=20)
+        
+    #duracion Pesimista
+    ac_label2 = tk.Label(entry_row_frame2, text='Duración Pesimista:', bg='white', fg='black', font=("Helvetica", 12))
+    ac_label2.grid(row=1, column=0, pady=20, padx=20)
+
+    durPes = tk.IntVar()
+    entry_durPes = tk.Entry(entry_row_frame2, textvariable=durPes, font=("Helvetica", 14))
+    entry_durPes.grid(row=1, column=1, pady=10, padx=20)
+        
+    #duracion probable
+    ac_label3 = tk.Label(entry_row_frame2, text='Duración más  Probable:', bg='white', fg='black', font=("Helvetica", 12))
+    ac_label3.grid(row=2, column=0, pady=20, padx=20)
+
+    durProb = tk.IntVar()
+    entry_durProb = tk.Entry(entry_row_frame2, textvariable=durProb, font=("Helvetica", 14))
+    entry_durProb.grid(row=2, column=1, pady=10, padx=20)
+        
+    #botons
+    button_frame2 = tk.Frame(root, bg="white")
+    button_frame2.pack(side='top', pady=20)
+
+    boton_agregar = tk.Button(button_frame2, text='AGREGAR', bg='#4e4bc9', fg='white', font=("Helvetica", 14),
+                              #command=lambda: ventana3(root)
+                               command=lambda:almacenar_actividad(datoActividades, actividad, durOpt.get(), durPes.get(), durProb.get(),root))
+    boton_agregar.grid(row=0, column=0, padx=20, pady=20, sticky='e')
