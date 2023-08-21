@@ -2,6 +2,8 @@ import tkinter as tk
 from PIL import Image, ImageTk 
 from interfaz.grafico import generar_grafico_pert
 from tkinter import ttk
+import numpy as np
+
 datoActividades = {}
 actividad=0
 
@@ -239,8 +241,6 @@ def agregar_actividades(frame):
                                command=lambda:almacenar_actividad(datoActividades, actividad, durOpt.get(), durPes.get(), durProb.get(),root))
     boton_agregar.grid(row=0, column=0, padx=20, pady=20, sticky='e')
 
-    # boton_finalizar = tk.Button(button_frame2, text='FINALIZAR', bg='#4e4bc9', fg='white', font=("Helvetica", 14),command=lambda: ventana4(root))
-    # boton_finalizar.grid(row=0, column=1, padx=20, pady=20, sticky='w')
 
 #----------------------------------------------------------------
 def ventana3(frame,datoActividades,actividad):
@@ -325,7 +325,6 @@ def ventana4(frame,datoActividades):
     def abrir_ventana_edicion():
     # Obtener el elemento seleccionado en la tabla
         item = tabla.selection()[0]
-        valor_actual = tabla.item(item, "values")[1]  # Obtener el valor actual
     
     # Crear una nueva ventana para la edición
         ventana_edicion = tk.Toplevel(root)
@@ -408,10 +407,17 @@ def ventana4(frame,datoActividades):
     boton_editar = ttk.Button(root, text="Editar Valor", command=abrir_ventana_edicion)
     boton_editar.pack()
 
-    duracion =10
+    #suma de resultados
+    duracionFinal = sum(actividad['pert'] for actividad in datoActividades.values())
+    suma_varianzas = sum(actividad['desvEstandar'] ** 2 for actividad in datoActividades.values())
+    desv_estandar_total = np.sqrt(suma_varianzas)
+
     # Agregar etiquetas
-    etiqueta1 = tk.Label(root, text="Duración final del proyecto: "+ str(duracion)+" días", bg='white', fg='black', font=("Helvetica", 14), anchor='w', width=30)
+    etiqueta1 = tk.Label(root, text="Duración final del proyecto: "+ str(duracionFinal)+" días", bg='white', fg='black', font=("Helvetica", 14), anchor='w', width=30)
     etiqueta1.pack(pady=10, padx=20)
+
+    etiqueta = tk.Label(root, text="Desviación estandar total: "+ str(desv_estandar_total)+" días", bg='white', fg='black', font=("Helvetica", 14), anchor='w', width=30)
+    etiqueta.pack(pady=10, padx=20)
 
     etiqueta2 = tk.Label(root, text="Escoja un intervalo de confianza: ", bg='white', fg='black', font=("Helvetica", 14), anchor='w', width=30)
     etiqueta2.pack(pady=10, padx=20)
@@ -420,26 +426,44 @@ def ventana4(frame,datoActividades):
     frame_radiobuttons = ttk.Frame(root)
     frame_radiobuttons.pack(pady=10, padx=20)
 
+    def mostrar_mensaje():
+        seleccionado = var.get()
+        if seleccionado=="68%":
+            menorTiempo1 = duracionFinal - 1*(desv_estandar_total)
+            mayorTiempo1 = duracionFinal + 1*(desv_estandar_total)
+            mensaje_label.config(text=f"Menor tiempo probable: {menorTiempo1} días")
+            mensaje_label2.config(text=f"Mayor tiempo probable: {mayorTiempo1} días")
+        if seleccionado=="95%":
+            menorTiempo2 = duracionFinal - 2*(desv_estandar_total)
+            mayorTiempo2 = duracionFinal + 2*(desv_estandar_total)
+            mensaje_label.config(text=f"Menor tiempo probable: {menorTiempo2} días")
+            mensaje_label2.config(text=f"Mayor tiempo probable: {mayorTiempo2} días")
+        if seleccionado=="99%":
+            menorTiempo3 = duracionFinal - 3*(desv_estandar_total)
+            mayorTiempo3 = duracionFinal + 3*(desv_estandar_total)
+            mensaje_label.config(text=f"Menor tiempo probable: {menorTiempo3} días")
+            mensaje_label2.config(text=f"Mayor tiempo probable: {mayorTiempo3} días")
+
+
     # Variable para almacenar la selección de los radiobuttons
     var = tk.StringVar(value=None)
 
     # Agregar radiobuttons al frame
-    radio_68 = ttk.Radiobutton(frame_radiobuttons, text="68%", variable=var, value="68%")
+    radio_68 = ttk.Radiobutton(frame_radiobuttons, text="68%", variable=var, value="68%", command=mostrar_mensaje)
     radio_68.pack(side="left", padx=10)
 
-    radio_95 = ttk.Radiobutton(frame_radiobuttons, text="95%", variable=var, value="95%")
+    radio_95 = ttk.Radiobutton(frame_radiobuttons, text="95%", variable=var, value="95%", command=mostrar_mensaje)
     radio_95.pack(side="left", padx=10)
 
-    radio_99 = ttk.Radiobutton(frame_radiobuttons, text="99%", variable=var, value="99%")
+    radio_99 = ttk.Radiobutton(frame_radiobuttons, text="99%", variable=var, value="99%", command=mostrar_mensaje)
     radio_99.pack(side="left", padx=10)
 
-    duracionprueba =10
-    # Agregar etiquetas
-    etiqueta1 = tk.Label(root, text="Menor tiempo probable: "+ str(duracionprueba)+" días", bg='white', fg='black', font=("Helvetica", 14), anchor='w', width=30)
-    etiqueta1.pack(pady=10, padx=20)
+    #impresion de mensaje
+    mensaje_label = tk.Label(root, text="", bg='white', fg='black', font=("Helvetica", 14), anchor='w', width=30)
+    mensaje_label.pack()
+    mensaje_label2 = tk.Label(root, text="", bg='white', fg='black', font=("Helvetica", 14), anchor='w', width=30)
+    mensaje_label2.pack()
 
-    etiqueta2 = tk.Label(root, text="Mayor tiempo probable: "+ str(duracionprueba)+" días", bg='white', fg='black', font=("Helvetica", 14), anchor='w', width=30)
-    etiqueta2.pack(pady=10, padx=20)
 
    #Frame para el botón
     button_frame = tk.Frame(root, bg='white')
@@ -447,7 +471,7 @@ def ventana4(frame,datoActividades):
 
     #Botón en el frame
     boton_finalizar = tk.Button(button_frame, text='Finalizar', bg='#4e4bc9', fg='white', font=("Helvetica", 14), command=root.destroy)
-    boton_finalizar.grid(row=0, column=1, padx=20, pady=20, sticky='w')
+    boton_finalizar.grid(row=0, column=1, padx=20, pady=40, sticky='w')
 
     boton_agregarActividad = tk.Button(button_frame, text='Agregar actividad', bg='#4e4bc9', fg='white', font=("Helvetica", 14))
     boton_agregarActividad.grid(row=0, column=2, padx=10, pady=0, sticky='ew') 
