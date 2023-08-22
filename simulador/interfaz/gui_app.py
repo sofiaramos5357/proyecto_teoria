@@ -139,8 +139,8 @@ class Frame(tk.Frame):
         self.boton_ayuda = tk.Button(self.button_frame, text='AYUDA', bg='#4e4bc9', fg='white', font=("Helvetica", 14), command=abrir_ventana_ayuda)
         self.boton_ayuda.grid(row=0, column=1, padx=20, pady=20, sticky='w')
         
-        self.boton_ayuda = tk.Button(self.button_frame, text='VER PROYECTOS', bg='#4e4bc9', fg='white', font=("Helvetica", 14))
-        self.boton_ayuda.grid(row=0, column=2, padx=20, pady=20, sticky='w')
+        self.boton_verProyecto = tk.Button(self.button_frame, text='VER PROYECTOS', bg='#4e4bc9', fg='white', font=("Helvetica", 14),command=self.ver_proyectos)
+        self.boton_verProyecto.grid(row=0, column=2, padx=20, pady=20, sticky='w')
         
     def iniciar_proyecto(self):
         self.root.configure(bg='white')
@@ -178,6 +178,88 @@ class Frame(tk.Frame):
             self.boton_agregar_actividades.config(state=tk.NORMAL)
         else:
             self.boton_agregar_actividades.config(state=tk.DISABLED)
+    
+    def ver_proyectos(self):
+        self.root.configure(bg='white')
+        self.root.title("Todos los Proyectos")
+        self.titulo_label.pack_forget()
+        self.image_label.pack_forget()
+        self.button_frame.pack_forget()
+
+        
+        ver_proyectos_frame = tk.Frame(self, bg='white')
+        ver_proyectos_frame.pack(expand=True, fill='both')
+
+      
+        proyectos_label = tk.Label(ver_proyectos_frame, text='Seleccione un Proyecto', bg='white', fg='black', font=("Helvetica", 20))
+        proyectos_label.pack(pady=20, padx=180)
+        
+        
+        tabla_titulo_label = tk.Label(ver_proyectos_frame, text='PROYECTOS', bg='#6b68ff', fg='white', font=("Helvetica", 16))
+        tabla_titulo_label.pack(pady=0, padx=20, anchor='c')
+    
+        
+        tabla_frame = tk.Frame(ver_proyectos_frame, bg='white')
+        tabla_frame.pack(pady=0, padx=20, expand=True, fill='both')
+    
+       
+        
+        fila_label = tk.Label(tabla_frame, text='Proyecto A', bg='#d0cff6', fg='black', font=("Helvetica", 14))
+        fila_label.pack(side='top', anchor='c', padx=5, pady=0)
+        fila_label1 = tk.Label(tabla_frame, text='Proyecto B', bg='#d0cff6', fg='black', font=("Helvetica", 14))
+        fila_label1.pack(side='top', anchor='c', padx=5, pady=0)
+        fila_label2 = tk.Label(tabla_frame, text='Proyecto C', bg='#d0cff6', fg='black', font=("Helvetica", 14))
+        fila_label2.pack(side='top', anchor='c', padx=5, pady=0)
+        
+          #botones
+        button_frame1 = tk.Frame(ver_proyectos_frame, bg="white")
+        button_frame1.pack(side='top', pady=20)
+
+        boton_ver= tk.Button(button_frame1, text='VER', bg='#4e4bc9', fg='white', font=("Helvetica", 14),)
+        boton_ver.grid(row=0, column=0, padx=20, pady=20, sticky='e')
+
+        boton_editar = tk.Button(button_frame1, text='EDITAR', bg='#4e4bc9', fg='white', font=("Helvetica", 14), command=self.actividades)
+        boton_editar.grid(row=0, column=1, padx=20, pady=20, sticky='w')
+    
+    def actividades(self):
+        self.root.configure(bg='white')
+        self.root.title("Actividades")
+        self.titulo_label.pack_forget()
+        self.image_label.pack_forget()
+        self.button_frame.pack_forget()
+
+        
+        ver_proyectos_frame = tk.Frame(self, bg='white')
+        ver_proyectos_frame.pack(expand=True, fill='both')
+
+      
+        proyectos_label = tk.Label(ver_proyectos_frame, text='Seleccione una Actividad', bg='white', fg='black', font=("Helvetica", 20))
+        proyectos_label.pack(pady=20, padx=180)
+        
+        
+        tabla_titulo_label = tk.Label(ver_proyectos_frame, text='ACTIVIDAD', bg='#6b68ff', fg='white', font=("Helvetica", 16))
+        tabla_titulo_label.pack(pady=0, padx=20, anchor='c')
+    
+        
+        tabla_frame = tk.Frame(ver_proyectos_frame, bg='white')
+        tabla_frame.pack(pady=0, padx=20, expand=True, fill='both')
+    
+       
+        
+        fila_label = tk.Label(tabla_frame, text='A', bg='#d0cff6', fg='black', font=("Helvetica", 14))
+        fila_label.pack(side='top', anchor='c', padx=5, pady=0)
+        fila_label1 = tk.Label(tabla_frame, text='B', bg='#d0cff6', fg='black', font=("Helvetica", 14))
+        fila_label1.pack(side='top', anchor='c', padx=5, pady=0)
+        fila_label2 = tk.Label(tabla_frame, text='C', bg='#d0cff6', fg='black', font=("Helvetica", 14))
+        fila_label2.pack(side='top', anchor='c', padx=5, pady=0)
+        
+          #botones
+        button_frame1 = tk.Frame(ver_proyectos_frame, bg="white")
+        button_frame1.pack(side='top', pady=20)
+
+
+        boton_editar = tk.Button(button_frame1, text='EDITAR', bg='#4e4bc9', fg='white', font=("Helvetica", 14))
+        boton_editar.grid(row=0, column=1, padx=20, pady=20, sticky='w')
 
 def almacenar_actividad(datoActividades, actividad, durOpt, durProb, durPes,root):
         # Llamar a la función para generar el gráfico y obtener los valores
