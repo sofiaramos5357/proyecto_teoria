@@ -238,7 +238,7 @@ def agregar_actividades(frame):
 
     boton_agregar = tk.Button(button_frame2, text='AGREGAR', bg='#4e4bc9', fg='white', font=("Helvetica", 14),
                               #command=lambda: ventana3(root)
-                               command=lambda:almacenar_actividad(datoActividades, actividad, durOpt.get(), durPes.get(), durProb.get(),root))
+                               command=lambda:almacenar_actividad(datoActividades, actividad, durOpt.get(), durProb.get(), durPes.get(),root))
     boton_agregar.grid(row=0, column=0, padx=20, pady=20, sticky='e')
 
 
@@ -277,6 +277,8 @@ def ventana3(frame,datoActividades,actividad):
 
     etiqueta5 = tk.Label(root, text="Duración esperada (PERT): "+ str(esperada)+" días", bg='white', fg='black', font=("Helvetica", 14), anchor='w', width=30)
     etiqueta5.pack(pady=10, padx=20)
+
+    generar_grafico_pert(int(durOpt), int(durProb), int(durPes))
 
     #Frame para el botón
     button_frame = tk.Frame(root, bg='white')
@@ -548,5 +550,5 @@ def ventana5(frame):
 
     boton_agregar = tk.Button(button_frame2, text='AGREGAR', bg='#4e4bc9', fg='white', font=("Helvetica", 14),
                               #command=lambda: ventana3(root)
-                               command=lambda:almacenar_actividad(datoActividades, actividad, durOpt.get(), durPes.get(), durProb.get(),root))
+                               command=lambda:almacenar_actividad(datoActividades, actividad, durOpt.get(), durProb.get(), durPes.get(),root))
     boton_agregar.grid(row=0, column=0, padx=20, pady=20, sticky='e')
