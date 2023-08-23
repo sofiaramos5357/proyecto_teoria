@@ -93,7 +93,7 @@ se aplica este modelo: """
     
     salir_button = tk.Button(ventana_ayuda,
                              text="CERRAR", bg='#4e4bc9', fg='white', font=("Helvetica", 14),
-                             command=ventana_ayuda.destroy)  # Close the window
+                             command=ventana_ayuda.destroy)  # Cierra la ventana
     salir_button.pack(pady=20)
     
     
@@ -111,7 +111,6 @@ class Frame(tk.Frame):
         super().__init__(root, width=800, height=750,  bg='#6b68ff')
         self.root = root
         self.pack()
-        #self.config( bg='#6b68ff')
         
         self.titulo_label = tk.Label(self,
                                     text="Simulador para la estimación de la duración de un proyecto: \nSIMU-PERT",
@@ -129,7 +128,7 @@ class Frame(tk.Frame):
         self.image_label.pack()
         
         
-        #botons
+        #botonws
         self.button_frame = tk.Frame(self, bg="#6b68ff")
         self.button_frame.pack(side='top', pady=20)
 
@@ -140,8 +139,6 @@ class Frame(tk.Frame):
         self.boton_ayuda = tk.Button(self.button_frame, text='AYUDA', bg='#4e4bc9', fg='white', font=("Helvetica", 14), command=abrir_ventana_ayuda)
         self.boton_ayuda.grid(row=0, column=1, padx=20, pady=20, sticky='w')
         
-        self.boton_verProyecto = tk.Button(self.button_frame, text='VER PROYECTOS', bg='#4e4bc9', fg='white', font=("Helvetica", 14))
-        self.boton_verProyecto.grid(row=0, column=2, padx=20, pady=20, sticky='w')
         
     def iniciar_proyecto(self):
         self.root.configure(bg='white')
@@ -238,12 +235,11 @@ def agregar_actividades(frame):
     entry_durProb.grid(row=2, column=1, pady=10, padx=20)
    
         
-    #botons
+    #botones
     button_frame2 = tk.Frame(root, bg="white")
     button_frame2.pack(side='top', pady=20)
 
     boton_agregar = tk.Button(button_frame2, text='AGREGAR', bg='#4e4bc9', fg='white', font=("Helvetica", 14),
-                              #command=lambda: ventana3(root)
                                command=lambda:almacenar_actividad(datoActividades, actividad, durOpt.get(), durProb.get(), durPes.get(),root))
     boton_agregar.grid(row=0, column=0, padx=20, pady=20, sticky='e')
 
@@ -292,10 +288,10 @@ def ventana3(frame,datoActividades,actividad):
 
     # Botón en el frame, centrado
 
-    self=root
+    #self=root
     
     # Botón en el frame
-    boton_duracionFinal = tk.Button(button_frame, text='Duracion final del proyecto', bg='#4e4bc9', fg='white', font=("Helvetica", 14), command=lambda: ventana4(self,datoActividades))
+    boton_duracionFinal = tk.Button(button_frame, text='Duracion final del proyecto', bg='#4e4bc9', fg='white', font=("Helvetica", 14), command=lambda: ventana4(root,datoActividades))
     boton_duracionFinal.grid(row=0, column=0, padx=0, pady=0, sticky='w')  
 
     barra_menu(root)
@@ -555,6 +551,5 @@ def ventana5(frame):
     button_frame2.pack(side='top', pady=20)
 
     boton_agregar = tk.Button(button_frame2, text='AGREGAR', bg='#4e4bc9', fg='white', font=("Helvetica", 14),
-                              #command=lambda: ventana3(root)
                                command=lambda:almacenar_actividad(datoActividades, actividad, durOpt.get(), durProb.get(), durPes.get(),root))
     boton_agregar.grid(row=0, column=0, padx=20, pady=20, sticky='e')
